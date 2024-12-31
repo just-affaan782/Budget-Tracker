@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: black;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #0ef;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .transactions ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .transactions li {
+      background: #f8f9fa;
+      margin: 5px 0;
+      padding: 10px;
+      border-left: 5px solid;
+    }
+
+    .transactions .income {
+      border-color: #28a745;
+    }
+
+    .transactions .expense {
+      border-color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Budget Tracker</h1>
+
+    <form id="transaction-form">
+      <input type="text" id="description" placeholder="Description" required />
+      <input type="number" id="amount" placeholder="Amount" required />
+      <select id="type">
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+      <button type="submit">Add Transaction</button>
+    </form>
+
+    <div class="summary">
+      <h2>Summary</h2>
+      <p>Total Income: <span id="total-income">0</span></p>
+      <p>Total Expense: <span id="total-expense">0</span></p>
+      <p>Net Balance: <span id="net-balance">0</span></p>
+    </div>
+
+    <div class="transactions">
+      <h2>Transactions</h2>
+      <ul id="transaction-list"></ul>
+    </div>
+  </div>
+  <script>
+    const transactionForm = document.getElementById('transaction-form');
+    const transactionList = document.getElementById('transaction-list');
+    const totalIncomeEl = document.getElementById('total-income');
+    const totalExpenseEl = document.getElementById('total-expense');
+    const netBalanceEl = document.getElementById('net-balance');
+
+    let transactions = [];
+
+    transactionForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const description = document.getElementById('description').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+      const type = document.getElementById('type').value;
+
+      const transaction = { description, amount, type };
+      transactions.push(transaction);
+
+      renderTransactions();
+      updateSummary();
+      transactionForm.reset();
+    });
+
+    function renderTransactions() {
+      transactionList.innerHTML = '';
+      transactions.forEach((transaction) => {
+        const li = document.createElement('li');
+        li.textContent = `${transaction.description}: $${transaction.amount}`;
+        li.classList.add(transaction.type);
+        transactionList.appendChild(li);
+      });
+    }
+
+    function updateSummary() {
+      const income = transactions
+        .filter((t) => t.type === 'income')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      const expense = transactions
+        .filter((t) => t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      const netBalance = income - expense;
+
+      totalIncomeEl.textContent = income;
+      totalExpenseEl.textContent = expense;
+      netBalanceEl.textContent = netBalance;
+    }
+  </script>
+</body>
+</html>
